@@ -11,6 +11,6 @@ export interface IUser {
     confirmed: boolean;
     blocked: boolean;
     role: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
