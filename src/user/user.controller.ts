@@ -1,4 +1,5 @@
 import { Body, Controller, Post, Get, Put, Delete, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ClientProxyZoomGK } from '@common/proxy/client-proxy';
 import { Observable } from 'rxjs';
 
@@ -6,6 +7,7 @@ import { UserMSG } from '@common/constants';
 import { IUser } from '@common/interfaces/user.interface';
 import { UserDTO } from './dto/user.dto';
 
+@ApiTags('users')
 @Controller('api/v1/user')
 export class UserController {
     constructor(
