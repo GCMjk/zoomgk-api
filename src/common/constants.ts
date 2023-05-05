@@ -1,6 +1,7 @@
 export enum RabbitMQ {
     UserQueue = 'users',
-    GuestQueue = 'guests'
+    GuestQueue = 'guests',
+    EventQueue = 'events'
 }
 
 export enum UserMSG {
@@ -19,4 +20,14 @@ export enum GuestMSG {
     UPDATE = 'UPDATE_GUEST',
     DELETE = 'DELETE_GUEST',
     VALID_GUEST = 'VALID_GUEST'
+}
+
+export enum EventMSG {
+    CREATE = 'CREATE_EVENT',
+    FIND_ALL = 'FIND_EVENTS',
+    FIND_ONE = 'FIND_EVENT',
+    UPDATE = 'UPDATE_EVENT',
+    DELETE = 'DELETE_EVENT',
+    ADD_USER = 'ADD_USER',
+    ADD_GUEST = 'ADD_GUEST'
 }

@@ -6,6 +6,7 @@ export class GuestDTO {
     @IsNotEmpty()
     @IsString()
     readonly name: string;
+    
     @ApiProperty()
     @IsNotEmpty()
     @IsEmail()

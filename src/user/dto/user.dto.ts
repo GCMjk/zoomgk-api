@@ -6,26 +6,32 @@ export class UserDTO {
     @IsNotEmpty()
     @IsString()
     readonly name: string;
+
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
     readonly lastname: string;
+
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
     readonly username: string;
+
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
     readonly gender: string;
+
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
     readonly birthday: string;
+
     @ApiProperty()
     @IsNotEmpty()
     @IsEmail()
     readonly email: string;
+    
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
