@@ -17,11 +17,6 @@ export class EventController {
     private _clientProxyEvent = this.clientProxy.clientProxyEvents();
     private _clientProxyGuest = this.clientProxy.clientProxyGuests();
 
-    @Post()
-    create(@Body() eventDTO: EventDTO): Observable<IEvent> {
-        return this._clientProxyEvent.send(EventMSG.CREATE, eventDTO);
-    }
-
     @Get()
     findAll(): Observable<IEvent[]> {
         return this._clientProxyEvent.send(EventMSG.FIND_ALL, '');
@@ -42,14 +37,13 @@ export class EventController {
         return this._clientProxyEvent.send(EventMSG.DELETE, id);
     }
 
-    @Post(':eventId/guest/:guestId')
+    @Put(':eventId/guest/:guestId')
     async addGuestToEvent(
         @Param('eventId') eventId: string,
         @Param('guestId') guestId: string
     ) {
         const guest = await this._clientProxyGuest
-            .send(GuestMSG.FIND_ONE, guestId)
-            .toPromise();
+            .send(GuestMSG.FIND_ONE, guestId);
         if (!guest) throw new HttpException('Guest not found', HttpStatus.NOT_FOUND);
         
         return this._clientProxyEvent.send(EventMSG.ADD_GUEST, { eventId, guestId });

@@ -28,6 +28,5 @@ export enum EventMSG {
     FIND_ONE = 'FIND_EVENT',
     UPDATE = 'UPDATE_EVENT',
     DELETE = 'DELETE_EVENT',
-    ADD_USER = 'ADD_USER',
     ADD_GUEST = 'ADD_GUEST'
 }

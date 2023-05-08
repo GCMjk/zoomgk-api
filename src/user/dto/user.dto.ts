@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class UserDTO {
     @ApiProperty()
@@ -24,8 +25,9 @@ export class UserDTO {
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsString()
-    readonly birthday: string;
+    @Type(() => Date)
+    @IsDate()
+    readonly birthday: Date;
 
     @ApiProperty()
     @IsNotEmpty()

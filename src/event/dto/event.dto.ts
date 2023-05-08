@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDate, IsMongoId, IsNotEmpty, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsNotEmpty, IsString } from "class-validator";
 
 export class EventDTO {
     @ApiProperty()
@@ -14,25 +15,9 @@ export class EventDTO {
 
     @ApiProperty()
     @IsNotEmpty()
+    @Type(() => Date)
     @IsDate()
     readonly date: Date;
-
-    @ApiProperty({
-        type: String,
-        isArray: false,
-        format: 'mongo-id'
-    })
-    @IsMongoId()
-    readonly user: string;
-
-    @ApiProperty({
-        type: [String],
-        isArray: true,
-        format: 'mongo-id'
-    })
-    @IsArray()
-    @IsMongoId({ each: true })
-    readonly guests: string[];
 
     @ApiProperty()
     @IsNotEmpty()
