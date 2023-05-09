@@ -1,13 +1,15 @@
-import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ClientProxyZoomGK } from '@common/proxy/client-proxy';
 import { Observable } from 'rxjs';
 
-import { IGuest } from '@common/interfaces/guest.interface';
-import { GuestDTO } from './dto/guest.dto';
 import { GuestMSG } from '@common/constants';
+import { IGuest } from '@common/interfaces/guest.interface';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { GuestDTO } from './dto/guest.dto';
 
 @ApiTags('guests')
+@UseGuards(JwtAuthGuard)
 @Controller('api/v1/guest')
 export class GuestController {
     constructor(

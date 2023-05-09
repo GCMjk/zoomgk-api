@@ -1,13 +1,15 @@
-import { Controller, Post, Get, Put, Delete, Body, Param, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Put, Delete, Body, Param, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ClientProxyZoomGK } from '@common/proxy/client-proxy';
 import { Observable } from 'rxjs';
 
-import { IEvent } from '@common/interfaces/event.interface';
-import { EventDTO } from './dto/event.dto';
 import { EventMSG, GuestMSG } from '@common/constants';
+import { IEvent } from '@common/interfaces/event.interface';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { EventDTO } from './dto/event.dto';
 
 @ApiTags('events')
+@UseGuards(JwtAuthGuard)
 @Controller('api/v1/event')
 export class EventController {
     constructor(

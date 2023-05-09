@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('ZoomGraphiK')
     .setDescription('The ZoomGraphiK API description')
     .setVersion('1.0.0')
+    .addBearerAuth()
     .build();
   
   const document = SwaggerModule.createDocument(app, options);
