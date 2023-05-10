@@ -1,12 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsDate, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
+
+import { GenderEnum, RoleEnum } from "@common/interfaces/user.interface";
 
 export class UserDTO {
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
-    readonly name: string;
+    readonly firstname: string;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -20,8 +22,8 @@ export class UserDTO {
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsString()
-    readonly gender: string;
+    @IsEnum(GenderEnum)
+    readonly gender: GenderEnum;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -38,4 +40,10 @@ export class UserDTO {
     @IsNotEmpty()
     @IsString()
     readonly password: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsEnum(RoleEnum)
+    readonly role: RoleEnum;
+
 }

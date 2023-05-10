@@ -45,6 +45,11 @@ export class UserController {
         return this._clientProxyUser.send(UserMSG.DELETE, id);
     }
 
+    @Put('validate/:token')
+    confirmedUser(@Param('token') token: string): Observable<IUser> {
+        return this._clientProxyUser.send(UserMSG.CONFIRMED, token);
+    }
+
     @Post(':userId/event')
     async addEventToUser(
         @Param('userId') userId: string,

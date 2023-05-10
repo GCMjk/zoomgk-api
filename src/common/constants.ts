@@ -10,7 +10,8 @@ export enum UserMSG {
     FIND_ONE = 'FIND_USER',
     UPDATE = 'UPDATE_USER',
     DELETE = 'DELETE_USER',
-    VALID_USER = 'VALID_USER'
+    CONFIRMED = 'CONFIRMED',
+    VALID_USER = 'VALID_USER',
 }
 
 export enum GuestMSG {
