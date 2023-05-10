@@ -1,5 +1,6 @@
 export enum RabbitMQ {
     UserQueue = 'users',
+    SubscriptionQueue = 'subscriptions',
     GuestQueue = 'guests',
     EventQueue = 'events'
 }
@@ -12,6 +13,14 @@ export enum UserMSG {
     DELETE = 'DELETE_USER',
     CONFIRMED = 'CONFIRMED',
     VALID_USER = 'VALID_USER',
+}
+
+export enum SubscriptionMSG {
+    CREATE = 'CREATE_SUBSCRIPTION',
+    FIND_ALL = 'FIND_SUBSCRIPTIONS',
+    FIND_ONE = 'FIND_SUBSCRIPTION',
+    UPDATE = 'UPDATE_SUBSCRIPTION',
+    DELETE = 'DELETE_SUBSCRIPTION'
 }
 
 export enum GuestMSG {

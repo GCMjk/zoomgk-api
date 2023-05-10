@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsDate, IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 
 import { GenderEnum, RoleEnum } from "@common/interfaces/user.interface";
 

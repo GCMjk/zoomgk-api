@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { GuestModule } from './guest/guest.module';
 import { EventModule } from './event/event.module';
 import { AuthModule } from './auth/auth.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     GuestModule,
     EventModule,
-    AuthModule
+    AuthModule,
+    SubscriptionModule
   ],
   controllers: [AppController],
   providers: [AppService],
