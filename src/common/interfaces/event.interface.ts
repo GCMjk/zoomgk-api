@@ -1,5 +1,4 @@
 import { IUser } from "@common/interfaces/user.interface";
-import { IGuest } from "@common/interfaces/guest.interface";
 
 export interface IEvent {
     _id: string;
@@ -7,7 +6,7 @@ export interface IEvent {
     description: string;
     date: Date;
     user: IUser;
-    guests: IGuest[];
+    guests: IUser[];
     key: string;
     createdAt: Date;
     updatedAt: Date;

@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { GuestModule } from './guest/guest.module';
 import { EventModule } from './event/event.module';
 import { AuthModule } from './auth/auth.module';
 import { SubscriptionModule } from './subscription/subscription.module';
@@ -15,7 +14,6 @@ import { SubscriptionModule } from './subscription/subscription.module';
       isGlobal: true
     }),
     UserModule,
-    GuestModule,
     EventModule,
     AuthModule,
     SubscriptionModule

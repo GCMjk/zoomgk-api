@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ClientProxyZoomGK } from '@common/proxy/client-proxy';
 import { Observable } from 'rxjs';
 
-import { EventMSG, GuestMSG } from '@common/constants';
+import { EventMSG, UserMSG } from '@common/constants';
 import { IEvent } from '@common/interfaces/event.interface';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import { EventDTO } from './dto/event.dto';
@@ -17,7 +17,7 @@ export class EventController {
     ) {}
 
     private _clientProxyEvent = this.clientProxy.clientProxyEvents();
-    private _clientProxyGuest = this.clientProxy.clientProxyGuests();
+    private _clientProxyUser = this.clientProxy.clientProxyUsers();
 
     @Get()
     findAll(): Observable<IEvent[]> {
@@ -39,15 +39,15 @@ export class EventController {
         return this._clientProxyEvent.send(EventMSG.DELETE, id);
     }
 
-    @Put(':eventId/guest/:guestId')
+    @Put(':eventId/guest/:userId')
     async addGuestToEvent(
         @Param('eventId') eventId: string,
-        @Param('guestId') guestId: string
+        @Param('userId') userId: string
     ) {
-        const guest = await this._clientProxyGuest
-            .send(GuestMSG.FIND_ONE, guestId);
-        if (!guest) throw new HttpException('Guest not found', HttpStatus.NOT_FOUND);
+        const user = await this._clientProxyUser
+            .send(UserMSG.FIND_ONE, userId);
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         
-        return this._clientProxyEvent.send(EventMSG.ADD_GUEST, { eventId, guestId });
+        return this._clientProxyEvent.send(EventMSG.ADD_GUEST, { eventId, userId });
     }
 }
