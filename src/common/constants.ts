@@ -1,7 +1,8 @@
 export enum RabbitMQ {
     UserQueue = 'users',
     SubscriptionQueue = 'subscriptions',
-    EventQueue = 'events'
+    EventQueue = 'events',
+    UploadFileQueue = 'upload-files'
 }
 
 export enum UserMSG {
@@ -9,6 +10,7 @@ export enum UserMSG {
     FIND_ALL = 'FIND_USERS',
     FIND_ONE = 'FIND_USER',
     UPDATE = 'UPDATE_USER',
+    UPLOAD_AVATAR = 'UPLOAD_AVATAR',
     DELETE = 'DELETE_USER',
     CONFIRMED = 'CONFIRMED',
     VALID_USER = 'VALID_USER',
@@ -30,4 +32,10 @@ export enum EventMSG {
     UPDATE = 'UPDATE_EVENT',
     DELETE = 'DELETE_EVENT',
     ADD_GUEST = 'ADD_GUEST'
+}
+
+export enum UploadFileMSG {
+    UPLOAD = 'UPLOAD',
+    UPDATE = 'UPDATE',
+    DELETE = 'DELETE'
 }

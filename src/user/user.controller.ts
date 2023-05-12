@@ -1,13 +1,15 @@
-import { Body, Controller, Post, Get, Put, Delete, Param, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, Put, Delete, Param, HttpException, HttpStatus, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ClientProxyZoomGK } from '@common/proxy/client-proxy';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
 
-import { EventMSG, SubscriptionMSG, UserMSG } from '@common/constants';
+import { EventMSG, SubscriptionMSG, UploadFileMSG, UserMSG } from '@common/constants';
 import { IUser } from '@common/interfaces/user.interface';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import { UserDTO } from './dto/user.dto';
 import { EventDTO } from '../event/dto/event.dto';
+import { IFile } from '@common/interfaces/file.interface';
 
 @ApiTags('users')
 @UseGuards(JwtAuthGuard)
@@ -20,6 +22,7 @@ export class UserController {
     private _clientProxyUser = this.clientProxy.clientProxyUsers();
     private _clientProxyEvent = this.clientProxy.clientProxyEvents();
     private _clientProxySubscription = this.clientProxy.clientProxySubscriptions();
+    private _clientProxyUploadFile = this.clientProxy.clientProxyUploadFiles();
 
     @Post()
     create(@Body() userDTO: UserDTO): Observable<IUser> {
@@ -72,4 +75,28 @@ export class UserController {
 
         return this._clientProxyUser.send(UserMSG.ASSIGNED_SUB, { userId, subscriptionId });
     }
+
+    @Put(':id/avatar')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadAvatar(
+        @Param('id') id: string,
+        @UploadedFile() file
+    ) {
+
+        const user = await this._clientProxyUser.send(UserMSG.FIND_ONE, id);
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+        const extensions = ['jpg', 'jpeg', 'png'];
+        const route = ['user', id, 'avatar'];
+        const avatar = await new Promise<IFile>((resolve, reject) => {
+            this._clientProxyUploadFile.send(UploadFileMSG.UPLOAD, { file, route, extensions })
+                .subscribe({
+                    next: avatar => resolve(avatar),
+                    error: err => reject(err),
+                });
+        });
+
+        return await this._clientProxyUser.send(UserMSG.UPLOAD_AVATAR, { id, avatar });
+    }
+    
 }
