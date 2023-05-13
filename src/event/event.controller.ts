@@ -1,10 +1,12 @@
-import { Controller, Get, Put, Delete, Body, Param, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Delete, Body, Param, HttpException, HttpStatus, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ClientProxyZoomGK } from '@common/proxy/client-proxy';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
 
-import { EventMSG, UserMSG } from '@common/constants';
+import { EventMSG, UploadFileMSG, UserMSG } from '@common/constants';
 import { IEvent } from '@common/interfaces/event.interface';
+import { IFile } from '@common/interfaces/file.interface';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import { EventDTO } from './dto/event.dto';
 
@@ -18,6 +20,7 @@ export class EventController {
 
     private _clientProxyEvent = this.clientProxy.clientProxyEvents();
     private _clientProxyUser = this.clientProxy.clientProxyUsers();
+    private _clientProxyUploadFile = this.clientProxy.clientProxyUploadFiles();
 
     @Get()
     findAll(): Observable<IEvent[]> {
@@ -49,5 +52,28 @@ export class EventController {
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         
         return this._clientProxyEvent.send(EventMSG.ADD_GUEST, { eventId, userId });
+    }
+
+    @Put(':id/cover')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadCover(
+        @Param('id') id: string,
+        @UploadedFile() file
+    ) {
+
+        const event = await this._clientProxyEvent.send(EventMSG.FIND_ONE, id);
+        if (!event) throw new HttpException('Event not found', HttpStatus.NOT_FOUND);
+
+        const extensions = ['jpg', 'jpeg', 'png'];
+        const route = ['event', id, 'cover'];
+        const cover = await new Promise<IFile>((resolve, reject) => {
+            this._clientProxyUploadFile.send(UploadFileMSG.UPLOAD, { file, route, extensions })
+                .subscribe({
+                    next: cover => resolve(cover),
+                    error: err => reject(err),
+                });
+        });
+
+        return await this._clientProxyEvent.send(EventMSG.UPLOAD_COVER, { id, cover });
     }
 }

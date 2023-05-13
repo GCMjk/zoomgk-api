@@ -1,13 +1,26 @@
 import { IUser } from "@common/interfaces/user.interface";
+import { IFile } from "@common/interfaces/file.interface";
 
 export interface IEvent {
     _id: string;
-    title: string;
+    event: string;
     description: string;
     date: Date;
-    user: IUser;
-    guests: IUser[];
-    key: string;
+    serviceID: string;
+    access: IAccess[];
+    cover: IFile;
+    available: boolean;
     createdAt: Date;
     updatedAt: Date;
+}
+
+export interface IAccess {
+    role: RoleEnum;
+    userID: IUser
+}
+
+export enum RoleEnum {
+    OWNER = 'OWNER',
+    CELEBRANT = 'CELEBRANT',
+    GUEST = 'GUEST'
 }

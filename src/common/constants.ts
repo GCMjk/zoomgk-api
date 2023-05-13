@@ -31,7 +31,8 @@ export enum EventMSG {
     FIND_ONE = 'FIND_EVENT',
     UPDATE = 'UPDATE_EVENT',
     DELETE = 'DELETE_EVENT',
-    ADD_GUEST = 'ADD_GUEST'
+    ADD_GUEST = 'ADD_GUEST',
+    UPLOAD_COVER = 'UPLOAD_COVER'
 }
 
 export enum UploadFileMSG {

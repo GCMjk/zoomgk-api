@@ -6,7 +6,7 @@ export class EventDTO {
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
-    readonly title: string;
+    readonly event: string;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -18,9 +18,4 @@ export class EventDTO {
     @Type(() => Date)
     @IsDate()
     readonly date: Date;
-
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsString()
-    readonly key: string;
 }
