@@ -11,6 +11,7 @@ import { IFile } from '@common/interfaces/file.interface';
 import { UserDTO } from '@/user/dto/user.dto';
 import { EventDTO } from '@/event/dto/event.dto';
 import { GuestDTO } from '@/guest/dto/guest.dto';
+import { ISubscription } from '@/common/interfaces/subscription.interface';
 
 @ApiTags('users')
 @UseGuards(JwtAuthGuard)
@@ -61,8 +62,15 @@ export class UserController {
         @Param('userId') userId: string,
         @Body() guestDTO: GuestDTO
     ) {
-        const user = await this._clientProxyUser.send(UserMSG.FIND_ONE, userId);
+        const { available, ...user } = await new Promise<IUser>((resolve, reject) => {
+            this._clientProxyUser.send(UserMSG.FIND_ONE, userId)
+                .subscribe({
+                    next: user => resolve(user),
+                    error: err => reject(err),
+                });
+        });
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!available) throw new HttpException('User not available', HttpStatus.BAD_REQUEST);
         
         return this._clientProxyGuest.send(GuestMSG.CREATE, { userId, guestDTO });
     }
@@ -72,8 +80,15 @@ export class UserController {
         @Param('userId') userId: string,
         @Body() eventDTO: EventDTO
     ) {
-        const user = await this._clientProxyUser.send(UserMSG.FIND_ONE, userId);
+        const { available, ...user } = await new Promise<IUser>((resolve, reject) => {
+            this._clientProxyUser.send(UserMSG.FIND_ONE, userId)
+                .subscribe({
+                    next: user => resolve(user),
+                    error: err => reject(err),
+                });
+        });
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!available) throw new HttpException('User not available', HttpStatus.BAD_REQUEST);
 
         return this._clientProxyEvent.send(EventMSG.CREATE, { userId, eventDTO });
     }
@@ -83,8 +98,15 @@ export class UserController {
         @Param('userId') userId: string,
         @Param('subscriptionId') subscriptionId: string
     ) {
-        const subscription = await this._clientProxySubscription.send(SubscriptionMSG.FIND_ONE, subscriptionId);
+        const { available, ...subscription } = await new Promise<ISubscription>((resolve, reject) => {
+            this._clientProxySubscription.send(SubscriptionMSG.FIND_ONE, subscriptionId)
+                .subscribe({
+                    next: subscription => resolve(subscription),
+                    error: err => reject(err),
+                });
+        });
         if (!subscription) throw new HttpException('Subscription Not Found', HttpStatus.NOT_FOUND);
+        if (!available) throw new HttpException('Subscription not available', HttpStatus.BAD_REQUEST);
 
         return this._clientProxyUser.send(UserMSG.ASSIGNED_SUB, { userId, subscriptionId });
     }
