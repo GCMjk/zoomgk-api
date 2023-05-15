@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
 import { AuthModule } from './auth/auth.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { GuestModule } from './guest/guest.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { SubscriptionModule } from './subscription/subscription.module';
     UserModule,
     EventModule,
     AuthModule,
-    SubscriptionModule
+    SubscriptionModule,
+    GuestModule
   ],
   controllers: [AppController],
   providers: [AppService],

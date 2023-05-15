@@ -4,12 +4,13 @@ import { ClientProxyZoomGK } from '@common/proxy/client-proxy';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
 
-import { EventMSG, SubscriptionMSG, UploadFileMSG, UserMSG } from '@common/constants';
-import { IUser } from '@common/interfaces/user.interface';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { UserDTO } from './dto/user.dto';
-import { EventDTO } from '../event/dto/event.dto';
+import { EventMSG, GuestMSG, SubscriptionMSG, UploadFileMSG, UserMSG } from '@common/constants';
+import { IUser } from '@common/interfaces/user.interface';
 import { IFile } from '@common/interfaces/file.interface';
+import { UserDTO } from '@/user/dto/user.dto';
+import { EventDTO } from '@/event/dto/event.dto';
+import { GuestDTO } from '@/guest/dto/guest.dto';
 
 @ApiTags('users')
 @UseGuards(JwtAuthGuard)
@@ -20,6 +21,7 @@ export class UserController {
     ) {}
 
     private _clientProxyUser = this.clientProxy.clientProxyUsers();
+    private _clientProxyGuest = this.clientProxy.clientProxyGuests();
     private _clientProxyEvent = this.clientProxy.clientProxyEvents();
     private _clientProxySubscription = this.clientProxy.clientProxySubscriptions();
     private _clientProxyUploadFile = this.clientProxy.clientProxyUploadFiles();
@@ -52,6 +54,17 @@ export class UserController {
     @Put('validate/:token')
     confirmedUser(@Param('token') token: string): Observable<IUser> {
         return this._clientProxyUser.send(UserMSG.CONFIRMED, token);
+    }
+
+    @Post(':userId/guest')
+    async addGuestToUser(
+        @Param('userId') userId: string,
+        @Body() guestDTO: GuestDTO
+    ) {
+        const user = await this._clientProxyUser.send(UserMSG.FIND_ONE, userId);
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        
+        return this._clientProxyGuest.send(GuestMSG.CREATE, { userId, guestDTO });
     }
 
     @Post(':userId/event')
