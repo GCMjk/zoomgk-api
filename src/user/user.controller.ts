@@ -5,13 +5,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
 
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { EventMSG, GuestMSG, SubscriptionMSG, UploadFileMSG, UserMSG } from '@common/constants';
+import { EmailMSG, EventMSG, GuestMSG, SubscriptionMSG, UploadFileMSG, UserMSG } from '@common/constants';
 import { IUser } from '@common/interfaces/user.interface';
 import { IFile } from '@common/interfaces/file.interface';
+import { ISubscription } from '@common/interfaces/subscription.interface';
+import { IGuest } from '@common/interfaces/guest.interface';
 import { UserDTO } from '@/user/dto/user.dto';
 import { EventDTO } from '@/event/dto/event.dto';
 import { GuestDTO } from '@/guest/dto/guest.dto';
-import { ISubscription } from '@/common/interfaces/subscription.interface';
 
 @ApiTags('users')
 @UseGuards(JwtAuthGuard)
@@ -26,10 +27,36 @@ export class UserController {
     private _clientProxyEvent = this.clientProxy.clientProxyEvents();
     private _clientProxySubscription = this.clientProxy.clientProxySubscriptions();
     private _clientProxyUploadFile = this.clientProxy.clientProxyUploadFiles();
+    private _clientProxyEmail = this.clientProxy.clientProxyEmails();
 
     @Post()
-    create(@Body() userDTO: UserDTO): Observable<IUser> {
-        return this._clientProxyUser.send(UserMSG.CREATE, userDTO);
+    async create(@Body() userDTO: UserDTO) {
+        const user = await new Promise<IUser>((resolve, reject) => {
+            this._clientProxyUser.send(UserMSG.CREATE, userDTO)
+                .subscribe({
+                    next: user => resolve(user),
+                    error: err => reject(err)
+                });
+        });
+
+        const email = user.email;
+        const confirmationToken = user.confirmationToken;
+
+        const { status } = await new Promise<any>((resolve, reject) => {
+            this._clientProxyEmail.send(EmailMSG.CONFIRMATION, { email, confirmationToken })
+                .subscribe({
+                    next: status => resolve(status),
+                    error: err => reject(err)
+                });
+        });
+
+        if (!status) {
+            await this._clientProxyUser.send(UserMSG.DELETE, user._id);
+            throw new HttpException('Error sending confirmation email', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return user;
+            
     }
 
     @Get()
@@ -71,8 +98,32 @@ export class UserController {
         });
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (!available) throw new HttpException('User not available', HttpStatus.BAD_REQUEST);
+
+        const guest = await new Promise<IGuest>((resolve, reject) => {
+            this._clientProxyGuest.send(GuestMSG.CREATE, { userId, guestDTO })
+                .subscribe({
+                    next: user => resolve(user),
+                    error: err => reject(err)
+                });
+        });
+
+        const email = guest.email;
+        const confirmationToken = guest.confirmationToken;
+
+        const { status } = await new Promise<any>((resolve, reject) => {
+            this._clientProxyEmail.send(EmailMSG.CONFIRMATION, { email, confirmationToken })
+                .subscribe({
+                    next: status => resolve(status),
+                    error: err => reject(err)
+                });
+        });
+
+        if (!status) {
+            await this._clientProxyGuest.send(GuestMSG.DELETE, guest._id);
+            throw new HttpException('Error sending confirmation email', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         
-        return this._clientProxyGuest.send(GuestMSG.CREATE, { userId, guestDTO });
+        return guest;
     }
 
     @Post(':userId/event')

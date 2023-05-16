@@ -3,7 +3,8 @@ export enum RabbitMQ {
     GuestQueue = 'guests',
     SubscriptionQueue = 'subscriptions',
     EventQueue = 'events',
-    UploadFileQueue = 'upload-files'
+    UploadFileQueue = 'upload-files',
+    EmailQueue = 'emails'
 }
 
 export enum UserMSG {
@@ -49,4 +50,8 @@ export enum UploadFileMSG {
     UPLOAD = 'UPLOAD',
     UPDATE = 'UPDATE',
     DELETE = 'DELETE'
+}
+
+export enum EmailMSG {
+    CONFIRMATION = 'CONFIRMATION_EMAIL'
 }
