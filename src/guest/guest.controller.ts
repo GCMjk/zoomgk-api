@@ -39,7 +39,7 @@ export class GuestController {
     }
 
     @Put('validate/:token')
-    confirmedUser(@Param('token') token: string): Observable<IGuest> {
+    confirmedGuest(@Param('token') token: string): Observable<IGuest> {
         return this._clientProxyGuest.send(GuestMSG.CONFIRMED, token);
     }
 }

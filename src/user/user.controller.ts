@@ -89,7 +89,7 @@ export class UserController {
         @Param('userId') userId: string,
         @Body() guestDTO: GuestDTO
     ) {
-        const { available, ...user } = await new Promise<IUser>((resolve, reject) => {
+        const { available, subscriptionID, ...user } = await new Promise<IUser>((resolve, reject) => {
             this._clientProxyUser.send(UserMSG.FIND_ONE, userId)
                 .subscribe({
                     next: user => resolve(user),
@@ -98,6 +98,18 @@ export class UserController {
         });
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (!available) throw new HttpException('User not available', HttpStatus.BAD_REQUEST);
+
+        if (subscriptionID === undefined) throw new HttpException('User does not have a subscription assigned', HttpStatus.BAD_REQUEST);
+
+        const guests = await new Promise<IGuest[]>((resolve, reject) => {
+            this._clientProxyGuest.send(GuestMSG.FIND_BY_USER_ID, user._id)
+                .subscribe({
+                    next: guests => resolve(guests),
+                    error: err => reject(err)
+                });
+        });
+
+        if (guests.length + 1 > subscriptionID.numberOfGuests) throw new HttpException('User is not allowed to add a new guest due to their subscription', HttpStatus.BAD_REQUEST);
 
         const guest = await new Promise<IGuest>((resolve, reject) => {
             this._clientProxyGuest.send(GuestMSG.CREATE, { userId, guestDTO })
@@ -131,15 +143,18 @@ export class UserController {
         @Param('userId') userId: string,
         @Body() eventDTO: EventDTO
     ) {
-        const { available, ...user } = await new Promise<IUser>((resolve, reject) => {
+        const { available, subscriptionID, ...user } = await new Promise<IUser>((resolve, reject) => {
             this._clientProxyUser.send(UserMSG.FIND_ONE, userId)
                 .subscribe({
                     next: user => resolve(user),
                     error: err => reject(err),
                 });
         });
+
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (!available) throw new HttpException('User not available', HttpStatus.BAD_REQUEST);
+
+        if (subscriptionID === undefined) throw new HttpException('User does not have a subscription assigned', HttpStatus.BAD_REQUEST);
 
         return this._clientProxyEvent.send(EventMSG.CREATE, { userId, eventDTO });
     }

@@ -1,4 +1,5 @@
 import { IFile } from "./file.interface";
+import { ISubscription } from "./subscription.interface";
 
 export interface IUser {
     _id: string;
@@ -10,7 +11,7 @@ export interface IUser {
     email: string;
     password: string;
     role: RoleEnum;
-    subscriptionID?: string;
+    subscriptionID?: ISubscription;
     avatar: IFile;
     confirmed: boolean;
     confirmationToken: string;
